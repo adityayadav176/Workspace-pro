@@ -1,0 +1,19 @@
+{
+  "name": "workspace-pro",
+  "version": "1.0.0",
+  "description": "Workspace pro - Your Notes and Task on the cloud ",
+  "license": "ISC",
+  "author": "Aditya yadav",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
