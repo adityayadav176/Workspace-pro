@@ -12,12 +12,12 @@ const UserSchema = new Schema({
     unique: true
   },
     mobileNo:{
-    type: number,
+    type: Number,
     required: true,
     unique: true
   },
    password:{
-    type: number,
+    type: String,
     required: true
   },
   date:{
@@ -26,4 +26,4 @@ const UserSchema = new Schema({
   }
 });
 
-module.exports = mongoose.modal('user', UserSchema)
+module.exports = mongoose.model('user', UserSchema)

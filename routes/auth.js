@@ -1,8 +1,32 @@
 const express = require('express');
+const User = require('../models/User');
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
 
-router.get('/', (req, res) => {
-  res.send("Auth Route Working");
+
+//Create a User using: POST "/api/auth" does't require auth
+
+router.post('/', [
+  body('email', 'Enter a valid Email').isEmail(),
+  body('name', 'Enter a valid Name').isLength({ min: 3 }),
+  body('password', 'Enter a valid Password').isLength({ min: 6 }),
+  body('mobileNo', 'Enter a valid MobileNo').isLength({ min: 10 })
+], async (req, res) => {
+  const { name, email, password, mobileNo } = req.body;
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() });
+    }else{
+      const user = await User.create({ name, email, password, mobileNo})
+    res.status(200).json({ success: true, user: user })
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: "Internal Server Error" });
+  }
+
 });
 
 module.exports = router;
