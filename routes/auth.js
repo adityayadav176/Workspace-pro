@@ -8,10 +8,10 @@ const bcrypt = require('bcrypt');
 //Create a User using: POST "/api/auth" does't require auth
 
 router.post('/', [
-  body('email', 'Enter a valid Email').isEmail(),
-  body('name', 'Enter a valid Name').isLength({ min: 3 }),
-  body('password', 'Enter a valid Password').isLength({ min: 6 }),
-  body('mobileNo', 'Enter a valid MobileNo').isLength({ min: 10 })
+  body('email', 'Enter A valid Email').isEmail(),
+  body('name', 'Enter A valid Name').isLength({ min: 3 }),
+  body('password', 'Password must Be Atleast 6 Character').isLength({ min: 6 }),
+  body('mobileNo', 'Enter A valid MobileNo').isLength({ min: 10 })
 ], async (req, res) => {
   const { name, email, password, mobileNo } = req.body;
   try {
@@ -24,7 +24,7 @@ router.post('/', [
     }
   } catch (error) {
     console.error(error);
-    res.status(400).json({ error: "Internal Server Error" });
+    res.status(400).json({ error: "Internal Server Error",error: 'Please Enter Unique Value For Email & mobileNo' });
   }
 
 });
