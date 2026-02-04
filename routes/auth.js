@@ -3,11 +3,14 @@ const User = require('../models/User');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
-// Todo improvement and small mistake database queries and 
+const jwt = require('jsonwebtoken');
 
-//Create a User using: POST "/api/auth/createuser" does't require auth
+const JWT_SECRET = 'MyNameIsAdityaIamAutherOfWorkspace'
+// Todo improvement env.local salt and jwt token  and small mistake database queries and 
 
-router.post('/createuser', [
+//Create a User using: POST "/api/auth/Signup" does't require auth
+
+router.post('/Signup', [
   body('email', 'Enter A valid Email').isEmail(),
   body('name', 'Enter A valid Name').isLength({ min: 3 }),
   body('password', 'Password must Be Atleast 6 Character').isLength({ min: 6 }),
@@ -21,8 +24,8 @@ router.post('/createuser', [
       return res.status(400).json({ error: errors.array() });
     }
     // Check Whether the user with this mobile number already exists 
-    let mobileUser = await User.findOne({mobileNo})
-    if(mobileUser){
+    let mobileUser = await User.findOne({ mobileNo })
+    if (mobileUser) {
       return res.status(400).json({ error: "Sorry A User With This Mobile No Already Exists!" });
     }
     // Check Whether the user with this email already exists 
@@ -34,15 +37,65 @@ router.post('/createuser', [
       const secPass = await bcrypt.hash(password, salt);
 
       //Create A New Use
-     let user = await User.create({ name, email, password: secPass, mobileNo })
-      res.status(200).json({ success: true, user: user })
+      let user = await User.create({ name, email, password: secPass, mobileNo })
+      const data = {
+        user: {
+          id: user.id
+        }
+      }
+      const authtoken = jwt.sign(data, JWT_SECRET)
+      res.status(200).json({ success: true, user: authtoken })
     }
   } catch (error) {
     console.error(error);
     // If there are some errors Return bad request and the error 
-    res.status(400).json({error: 'Please Enter Unique Value For Email & mobileNo' });
+    res.status(400).json({ error: "Some Error Occurred" });
+  }
+});
+//Authenticate a User using: POST "/api/auth/login" does't require auth
+
+router.post('/login', [
+  body('password', 'Password Cannot Be Blank').exists()
+], async (req, res) => {
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
 
+  const { email, password, mobileNo } = req.body;
+
+  try {
+    if (!email && !mobileNo) {
+      return res.status(400).json({ error: "Email or Mobile required" });
+    }
+
+    let user = await User.findOne({
+      $or: [{ email }, { mobileNo }]
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid Credentials" });
+    }
+
+    const passCompare = await bcrypt.compare(password, user.password);
+
+    if (!passCompare) {
+      return res.status(400).json({ error: "Invalid Credentials" });
+    }
+
+    const data = {
+      user: { id: user.id }
+    };
+
+    const authtoken = jwt.sign(data, JWT_SECRET);
+
+    res.status(200).json({ success: true, authtoken });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 module.exports = router;
