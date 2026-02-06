@@ -2,7 +2,11 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose;
 
 const TaskSchema = new Schema({
-  Title:{
+  user:{
+     type: mongoose.Schema.Types.ObjectId,
+     ref: 'user'
+   },
+  title:{
     type: String,
     required: true
   },
@@ -11,11 +15,11 @@ const TaskSchema = new Schema({
     required: true
   },
     status:{
-    type: number,
+    type: String,
     required: true,
   },
    priority:{
-    type: number,
+    type: String,
     required: true
   },
   date:{

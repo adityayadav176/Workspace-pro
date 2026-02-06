@@ -4,7 +4,7 @@ const fetchuser = require('../middleware/fetchuser');
 const Notes = require('../models/Notes');
 const { body, validationResult } = require('express-validator');
 
-//get All Notes: get "/api/auth/fetchallnotes" required Login.
+//ROUTE 1 get All Notes: get "/api/auth/fetchallnotes" required Login.
 router.get('/fetchAllNotes', fetchuser, async (req, res) => {
   try {
     // fetch all notes for specific user
@@ -17,7 +17,7 @@ router.get('/fetchAllNotes', fetchuser, async (req, res) => {
   }
 });
 
-//Add Notes: POST "/api/auth/addnote" required Login.
+//ROUTE 2 Add Notes: POST "/api/auth/addnote" required Login.
 router.post('/addNote',  fetchuser,
   [
     body('title').isLength({ min: 3 }),
@@ -53,7 +53,7 @@ router.post('/addNote',  fetchuser,
   }
 );
 
-//Delete existing Notes: DELETE "/api/auth/deletenote" required Login.
+//ROUTE 3 Delete existing Notes: DELETE "/api/auth/deletenote" required Login.
 router.delete('/deleteNote/:id', fetchuser, async (req, res) => {
   try {
     // 1. Find the note
@@ -81,10 +81,9 @@ router.delete('/deleteNote/:id', fetchuser, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-module.exports = router;
 
 
-//update an existing Notes: PUT "/api/auth/updatenotes" required Login.
+//ROUTE4 update an existing Notes: PUT "/api/auth/updatenotes" required Login.
 router.put('/updateNote/:id', [
   body('title').isLength({ min: 3 }),
   body('description', 'description must Be Atleast 5 Character').isLength({ min: 5 })

@@ -8,7 +8,7 @@ const fetchuser = require('../middleware/fetchuser');
 const JWT_SECRET = 'MyNameIsAdityaIamAutherOfWorkspace'
 
 // Todo improvement env.local salt and jwt token  and small mistake database queries and 
-//Create a User using: POST "/api/auth/Signup" does't require auth
+//ROUTE 1 Create a User using: POST "/api/auth/Signup" does't require auth
 
 router.post('/Signup', [
   body('email', 'Enter A valid Email').isEmail(),
@@ -102,7 +102,7 @@ router.post('/login', [
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-//get loggdin user details: POST "/api/auth/getuser" does't require auth
+//ROUTE 3 get loggdin user details: POST "/api/auth/getuser" does't require auth
 router.get('/getuser', fetchuser, async (req, res) => {
   try {
     //FROM MIDDLEWARE
