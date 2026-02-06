@@ -86,6 +86,33 @@ router.put('/updateTask/:id', [
 });
 
 //ROUTE 4 Delete existing Tasks: DELETE "/api/task/deleteTask" required Login.
+router.delete('/deleteTask/:id', fetchuser, async (req, res) => {
+  try {
+    // 1. Find the Task
+    let task = await Task.findById(req.params.id);
+
+    // 2. If task not found
+    if (!task) {
+      return res.status(404).send("Task not found");
+    }
+
+    // 3. Check ownership
+    if (task.user.toString() !== req.user.id) {
+      return res.status(401).send("Not Allowed");
+    }
+
+    // 4. Delete task
+    task = await Task.findByIdAndDelete(req.params.id);
+
+    // 5. Send response
+    res.json({ success: true, message: "Task deleted"});
+
+      // If Any Error Occured Then Show The Error 
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 
 module.exports = router;
